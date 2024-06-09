@@ -4,10 +4,15 @@ and merges them into a single `.xlsx` document saved in `documents_output/`
 """
 
 import datetime
-import pandas as pd
+import logging
 import os
+import pandas as pd
 
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# Normalized sheet names
 sheet_index_names = (
     (0, "PSI"),
     (1, "A"),
@@ -27,9 +32,18 @@ source_docs = [
     if file.endswith(".xlsx")
 ]
 
+# Open the output file for writing
 with pd.ExcelWriter(result_doc) as writer:
+    logger.info("Opened %s for writing.", result_doc)
+
+    # Read data from each input file
     for document in source_docs:
+        logger.info("Opened %s for reading.", document)
+
+        # Read data from each input file sheet
         for sheet_num in range(0, 4):
             sheet_name = pd.ExcelFile(document).sheet_names[sheet_num]
             df = pd.read_excel(document, sheet_name)
             df.to_excel(writer, sheet_name=sheet_index_names[sheet_num][1], index=False)
+
+    logger.info("Finished processing all source documents.")
