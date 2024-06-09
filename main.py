@@ -46,6 +46,8 @@ with pd.ExcelWriter(result_doc) as writer:
             df = pd.read_excel(document, sheet_name)
             dest_sheet_name = sheet_index_names[sheet_num][1]
 
+            print("Processing:", document, "-->", sheet_name, "-->", dest_sheet_name)
+
             # Try to append data to an existing sheet
             try:
                 df.to_excel(
