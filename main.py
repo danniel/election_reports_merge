@@ -30,5 +30,6 @@ source_docs = [
 with pd.ExcelWriter(result_doc) as writer:
     for document in source_docs:
         for sheet_num in range(0, 4):
-            df = pd.read_excel(document)
+            sheet_name = pd.ExcelFile(document).sheet_names[sheet_num]
+            df = pd.read_excel(document, sheet_name)
             df.to_excel(writer, sheet_name=sheet_index_names[sheet_num][1], index=False)
