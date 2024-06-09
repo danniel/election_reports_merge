@@ -8,6 +8,13 @@ import pandas as pd
 import os
 
 
+sheet_index_names = (
+    (0, "PSI"),
+    (1, "A"),
+    (2, "B"),
+    (3, "C"),
+)
+
 result_doc = r"documents_output/Compiled_{}.xlsx".format(
     datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S_UTC")
 )
@@ -23,6 +30,5 @@ source_docs = [
 with pd.ExcelWriter(result_doc) as writer:
     for document in source_docs:
         for sheet_num in range(0, 4):
-            sheet_name = pd.ExcelFile(document).sheet_names[sheet_num]
             df = pd.read_excel(document)
-            df.to_excel(writer, sheet_name=sheet_name, index=False)
+            df.to_excel(writer, sheet_name=sheet_index_names[sheet_num][1], index=False)
