@@ -21,7 +21,7 @@ sheet_index_names = (
 )
 
 result_doc = r"documents_output/Compiled_{}.xlsx".format(
-    datetime.datetime.now(datetime.UTC).strftime("%Y%m%d_%H%M%S_UTC")
+    datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S_UTC")
 )
 
 source_dir = r"documents_input/"
