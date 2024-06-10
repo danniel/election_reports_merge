@@ -36,10 +36,13 @@ source_docs = [
 
 # Do not include these columns in the output document
 drop_columns = (
-    tuple(f"Note {i}" for i in range(100))
-    + tuple(f"Attachment {i}" for i in range(100))
-    + ("Email", "FirstName", "LastName", "PhoneNumber")
+    ["Email", "FirstName", "LastName", "PhoneNumber"]
+    + [f"Note {i}" for i in range(1, 100)]
+    + [f"Notes.{i}" for i in range(1, 100)]
+    + [f"Attachment {i}" for i in range(1, 100)]
+    + [f"Attachments.{i}" for i in range(1, 100)]
 )
+# print("Columns which will be dropped: ", drop_columns)
 
 
 # Open the output file for writing
