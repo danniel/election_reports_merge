@@ -13,6 +13,7 @@ from pytz import timezone
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+
 # Normalized sheet names
 sheet_index_names = (
     (0, "PSI"),
@@ -20,6 +21,7 @@ sheet_index_names = (
     (2, "B"),
     (3, "C"),
 )
+
 
 result_doc = r"documents_output/Compiled_{}.xlsx".format(
     datetime.datetime.now(timezone("eet")).strftime("%Y%m%d_%H%M%S_EEST")
@@ -34,15 +36,14 @@ source_docs = [
 ]
 
 
-# Do not include these columns in the output document
-drop_columns = (
-    ["Email", "FirstName", "LastName", "PhoneNumber"]
-    + [f"Note {i}" for i in range(1, 100)]
-    + [f"Notes.{i}" for i in range(1, 100)]
-    + [f"Attachment {i}" for i in range(1, 100)]
-    + [f"Attachments.{i}" for i in range(1, 100)]
-)
-# print("Columns which will be dropped: ", drop_columns)
+# List of exact matches to be removed
+drop_columns_exact = ("Email", "FirstName", "LastName", "PhoneNumber")
+
+# List of startswith matches to be removed
+drop_columns_start = ("Note ", "Notes.", "Attachment ", "Attachments.")
+
+# List of endswith matches to be removed
+drop_columns_end = tuple()
 
 
 # Open the output file for writing
@@ -58,8 +59,18 @@ with pd.ExcelWriter(result_doc) as writer:
             sheet_name = pd.ExcelFile(document).sheet_names[sheet_num]
             df = pd.read_excel(document, sheet_name)
 
-            # TODO: Doesn't seem to delete the entire column from the sheet
-            # df.drop(drop_columns, errors="ignore", axis=1, inplace=True)
+            # Drop some columns by name
+            df.drop(
+                [
+                    col
+                    for col in df.columns
+                    if (col in drop_columns_exact)
+                    or col.startswith(drop_columns_start)
+                    or col.endswith(drop_columns_end)
+                ],
+                axis=1,
+                inplace=True,
+            )
 
             dest_sheet_name = sheet_index_names[sheet_num][1]
 
@@ -72,7 +83,7 @@ with pd.ExcelWriter(result_doc) as writer:
                     sheet_name=dest_sheet_name,
                     startrow=writer.sheets[dest_sheet_name].max_row,
                     index=False,
-                    header=False,
+                    # header=False,  # TODO: Temporarily embed the header row too
                 )
             except KeyError:
                 # Or write data to a new sheet
