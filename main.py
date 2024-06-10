@@ -7,6 +7,7 @@ import datetime
 import logging
 import os
 import pandas as pd
+from pytz import timezone
 
 
 logger = logging.getLogger(__name__)
@@ -21,7 +22,7 @@ sheet_index_names = (
 )
 
 result_doc = r"documents_output/Compiled_{}.xlsx".format(
-    datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%d_%H%M%S_UTC")
+    datetime.datetime.now(timezone("eet")).strftime("%Y%m%d_%H%M%S_EEST")
 )
 
 source_dir = r"documents_input/"
