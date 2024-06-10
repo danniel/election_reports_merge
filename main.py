@@ -33,6 +33,15 @@ source_docs = [
     if file.endswith(".xlsx")
 ]
 
+
+# Do not include these columns in the output document
+drop_columns = (
+    tuple(f"Note {i}" for i in range(100))
+    + tuple(f"Attachment {i}" for i in range(100))
+    + ("Email", "FirstName", "LastName", "PhoneNumber")
+)
+
+
 # Open the output file for writing
 with pd.ExcelWriter(result_doc) as writer:
     logger.info("Opened %s for writing.", result_doc)
@@ -45,6 +54,10 @@ with pd.ExcelWriter(result_doc) as writer:
         for sheet_num in range(0, 4):
             sheet_name = pd.ExcelFile(document).sheet_names[sheet_num]
             df = pd.read_excel(document, sheet_name)
+
+            # TODO: Doesn't seem to delete the entire column from the sheet
+            # df.drop(drop_columns, errors="ignore", axis=1, inplace=True)
+
             dest_sheet_name = sheet_index_names[sheet_num][1]
 
             print("Processing:", document, "-->", sheet_name, "-->", dest_sheet_name)
